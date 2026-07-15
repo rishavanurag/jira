@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:8001
+@contentType = application/json
+
+### Register User
+
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+    "email": "user2@example.com",
+    "password": "password123",
+    "full_name": "John Doe"
+}
+
+### Login
+
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "user2@example.com",
+    "password": "password123"
+}
+
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MzliMzk0MC1jMjllLTQzYzgtOGFiYi04MWE1ZmFhZGRlYjQiLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgyNTk2MzA3fQ.3UVtPqh135BJeRGyf3TgXNecvOVGMo7_JG6JIeklLaE
+
+
+### Get Current user
+
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{accessToken}}
