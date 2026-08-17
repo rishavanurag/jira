@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.auth import (
     UserCreateSchema,
@@ -29,10 +30,14 @@ def register_user(
     "/login", response_model=LoginResponseSchema, status_code=status.HTTP_200_OK
 )
 def login_user(
-    login_data: LoginRequestSchema,
+    oauth2_form: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> LoginResponseSchema:
     """Authenticate a user and return access and refresh tokens"""
+    login_data = LoginRequestSchema(
+        email=oauth2_form.username,
+        password=oauth2_form.password
+    )
     return auth_service.login_user(login_data)
 
 

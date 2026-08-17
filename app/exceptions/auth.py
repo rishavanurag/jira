@@ -26,3 +26,9 @@ class InvalidTokenError(BaseAppException):
     error_code = "INVALID_TOKEN"
     message = "Invalid or expired token"
     status_code = 401
+
+class UserNotAuthorizedError(BaseAppException):
+    """Raised when user is not autherized for the request"""
+    error_code = "USER_NOT_AUTHORIZED"
+    message = "User not authorized for this request"
+    status_code = 403
