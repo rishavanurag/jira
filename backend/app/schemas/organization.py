@@ -1,6 +1,9 @@
 from uuid import UUID
 from typing import Annotated
-from pydantic import BaseModel, StringConstraints, ConfigDict, Field
+from pydantic import BaseModel, StringConstraints, ConfigDict, Field, EmailStr
+
+from app.constants.role import SystemRoleCode
+from app.models.organization import MembershipStatus
 
 
 class OrganizationCreateRequestSchema(BaseModel):
@@ -28,3 +31,22 @@ class OrganizationResponseSchema(BaseModel):
 
 class OrganizationUpdateRequestSchema(BaseModel):
     description: str | None = Field(default=None)
+
+
+class OrganizationMemberInviteRequestSchema(BaseModel):
+    email: EmailStr
+
+
+class MembershipResponseSchema(BaseModel):
+    email: EmailStr
+    organization_id:UUID
+    role_code: SystemRoleCode
+    status: MembershipStatus
+
+
+class OrganizationMemberResponseSchema(BaseModel):
+    items: list[MembershipResponseSchema]
+    total: int
+    page: int
+    page_size: int
+    pages: int

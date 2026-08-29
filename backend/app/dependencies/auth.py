@@ -12,13 +12,13 @@ from app.exceptions.auth import InvalidTokenError
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-def get_user_repo(db:Session = Depends(get_db)) -> UserRepository:
+def get_user_repository(db:Session = Depends(get_db)) -> UserRepository:
     return UserRepository(db)
 
-def get_auth_service(user_repo: UserRepository = Depends(get_user_repo)) -> AuthService:
+def get_auth_service(user_repo: UserRepository = Depends(get_user_repository)) -> AuthService:
     return AuthService(user_repo)
 
-def get_current_user(token: str = Depends(oauth2_scheme), user_repo:UserRepository = Depends(get_user_repo)) -> User:
+def get_current_user(token: str = Depends(oauth2_scheme), user_repo:UserRepository = Depends(get_user_repository)) -> User:
     """Get the current user details by decoding the token"""
     payload = decode_token(token)
     if not payload.token_type == TokenType.ACCESS:

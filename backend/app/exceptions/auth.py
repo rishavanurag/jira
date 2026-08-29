@@ -32,3 +32,9 @@ class UserNotAuthorizedError(BaseAppException):
     error_code = "USER_NOT_AUTHORIZED"
     message = "User not authorized for this request"
     status_code = 403
+
+class UserNotFoundException(BaseAppException):
+    """Raised when user does not exists"""
+    error_code = "USER_NOT_FOUND"
+    message = "User not found"
+    status_code = 404

@@ -3,7 +3,7 @@ from enum import StrEnum
 from datetime import datetime
 from typing import List, TYPE_CHECKING
 
-from sqlalchemy import String, ForeignKey, DateTime, Enum, UniqueConstraint
+from sqlalchemy import String, ForeignKey, DateTime, Enum, Index, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
@@ -46,9 +46,7 @@ class Role(TimestampMixin, Base):
     code: Mapped[str] = mapped_column(
         String(30), nullable=False, index=True, unique=True
     )
-    name: Mapped[str] = mapped_column(
-        String(30), nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(String(100))
     is_system: Mapped[bool] = mapped_column(nullable=False, default=False)
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
@@ -56,9 +54,9 @@ class Role(TimestampMixin, Base):
     memberships: Mapped[List["Membership"]] = relationship(
         "Membership", back_populates="role"
     )
-    
+
     @validates("code")
-    def validate_code(self, key:str, code:str) -> str:
+    def validate_code(self, key: str, code: str) -> str:
         """Convert code to uppercase"""
         return code.strip().upper()
 
@@ -74,9 +72,15 @@ class Membership(TimestampMixin, Base):
 
     __tablename__ = "memberships"
 
-    __table_args__ = (UniqueConstraint(
-        "user_id", "organization_id", name="uq_membership_user_org"
-    ),)
+    __table_args__ = (
+        Index(
+            "uq_membership_user_org_active",
+            "user_id",
+            "organization_id",
+            unique=True,
+            postgresql_where=text("status != 'REMOVED'"),
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
